@@ -31,7 +31,7 @@ Bu projeyi geliştirmek veya kodlarını incelemek isterseniz:
 
 1.  Depoyu klonlayın:
     ```bash
-    git clone [https://github.com/KULLANICI_ADINIZ/FastCut.git](https://github.com/KULLANICI_ADINIZ/FastCut.git)
+    git clone [https://github.com/yuxelmurat/FastCut.git](https://github.com/yuxelmurat/FastCut.git)
     ```
 
 2.  Gerekli kütüphaneleri yükleyin:
@@ -52,3 +52,4 @@ Bu projeyi geliştirmek veya kodlarını incelemek isterseniz:
 ## 📝 Lisans
 
 Bu proje MIT Lisansı ile lisanslanmıştır. Herkes özgürce kullanabilir, değiştirebilir ve dağıtabilir.
+
