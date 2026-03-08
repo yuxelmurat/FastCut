@@ -53,4 +53,11 @@ Bu projeyi geliştirmek veya kodlarını incelemek isterseniz:
 
 Bu proje MIT Lisansı ile lisanslanmıştır. Herkes özgürce kullanabilir, değiştirebilir ve dağıtabilir.
 
+## 📧 İletişim
+
+**Design4D — Dijital Tasarım Ajansı**  
+📍 Kocaeli — Türkiye  
+✉️ murat@yukselmurat.com  
+🌐 [yukselmurat.com](https://www.yukselmurat.com)
+🌐 [design4d.com.tr](https://www.design4d.com.tr)
 
