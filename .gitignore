@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+build/pyinstaller/
+dist/
+*.spec
+installer/Output/
