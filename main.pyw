@@ -3,7 +3,7 @@ import os
 import datetime
 import tkinter as tk
 from tkinter import messagebox
-from PIL import Image, ImageTk, ImageGrab
+from PIL import Image, ImageTk, ImageGrab, ImageEnhance
 import winreg
 import ctypes
 
@@ -78,16 +78,52 @@ class FastCutApp:
         self.abs_img_x = self.win_x
         self.abs_img_y = self.win_y
 
+        # --- ARKA PLAN (KIRPILMAYAN ALANI KARARTMA) ---
+        self.dim_image = ImageEnhance.Brightness(self.resized_image).enhance(0.35)
+        self.dim_tk_image = ImageTk.PhotoImage(self.dim_image)
+        self.bg_win = tk.Toplevel(self.root)
+        self.bg_win.overrideredirect(True)
+        self.bg_win.geometry(f"{self.display_w}x{self.display_h}+{self.abs_img_x}+{self.abs_img_y}")
+        bg_canvas = tk.Canvas(self.bg_win, bg='black', highlightthickness=0)
+        bg_canvas.pack(fill="both", expand=True)
+        bg_canvas.create_image(0, 0, anchor="nw", image=self.dim_tk_image)
+
         self.canvas = tk.Canvas(self.root, bg='black', highlightthickness=0)
         self.canvas.pack(fill="both", expand=True)
         self.image_on_canvas = self.canvas.create_image(0, 0, anchor="nw", image=self.tk_image)
 
+        # --- KENARLIK VE BOYUT GÖSTERGESİ ---
+        self.border_id = self.canvas.create_rectangle(1, 1, self.win_w - 1, self.win_h - 1, outline="#4a90d9", width=2)
+        self.size_bg_id = self.canvas.create_rectangle(0, 0, 0, 0, fill="black", outline="")
+        self.size_text_id = self.canvas.create_text(10, 8, anchor="nw", text="", fill="white", font=("Segoe UI", 9, "bold"))
+        self.update_hud()
+
         self.root.bind("<Motion>", self.check_cursor)
         self.root.bind("<ButtonPress-1>", self.start_action)
         self.root.bind("<B1-Motion>", self.do_action)
-        
+        self.root.bind("<Escape>", lambda e: self.close_app())
+        self.root.bind("<Return>", lambda e: self.save_image())
+
         self.action_mode = None
+        self.current_cursor_mode = ""
         self.add_buttons()
+
+        self.bg_win.lower(self.root)
+        self.root.focus_force()
+
+    def update_hud(self):
+        w, h = self.root.winfo_width(), self.root.winfo_height()
+        self.canvas.coords(self.border_id, 1, 1, w - 1, h - 1)
+
+        text = f"{w} x {h}"
+        self.canvas.itemconfig(self.size_text_id, text=text)
+        bbox = self.canvas.bbox(self.size_text_id)
+        if bbox:
+            pad = 4
+            self.canvas.coords(self.size_bg_id, bbox[0] - pad, bbox[1] - pad, bbox[2] + pad, bbox[3] + pad)
+
+        self.canvas.tag_raise(self.size_bg_id)
+        self.canvas.tag_raise(self.size_text_id)
 
     def check_cursor(self, event):
         x, y = event.x, event.y
@@ -145,14 +181,23 @@ class FastCutApp:
         offset_x = self.abs_img_x - current_win_x
         offset_y = self.abs_img_y - current_win_y
         self.canvas.coords(self.image_on_canvas, offset_x, offset_y)
+        self.update_hud()
 
     def add_buttons(self):
         btn_frame = tk.Frame(self.root, bg="black")
         btn_frame.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-10)
-        btn_cancel = tk.Button(btn_frame, text="X", bg="red", fg="white", font=("Arial", 12, "bold"), command=self.close_app, width=3, bd=0)
+
+        btn_cancel = tk.Button(btn_frame, text="X", bg="red", fg="white", font=("Arial", 12, "bold"),
+                                command=self.close_app, width=3, bd=0, cursor="hand2")
         btn_cancel.pack(side="right", padx=5)
-        btn_save = tk.Button(btn_frame, text="✓", bg="green", fg="white", font=("Arial", 12, "bold"), command=self.save_image, width=3, bd=0)
+        btn_cancel.bind("<Enter>", lambda e: btn_cancel.config(bg="#ff6b6b"))
+        btn_cancel.bind("<Leave>", lambda e: btn_cancel.config(bg="red"))
+
+        btn_save = tk.Button(btn_frame, text="✓", bg="green", fg="white", font=("Arial", 12, "bold"),
+                              command=self.save_image, width=3, bd=0, cursor="hand2")
         btn_save.pack(side="right", padx=5)
+        btn_save.bind("<Enter>", lambda e: btn_save.config(bg="#3ddc3d"))
+        btn_save.bind("<Leave>", lambda e: btn_save.config(bg="green"))
 
     def save_image(self):
         win_x = self.root.winfo_x()
@@ -182,11 +227,13 @@ class FastCutApp:
             new_filename = f"{name}_fastcut_{timestamp}{ext}"
             save_path = os.path.join(dir_name, new_filename)
             cropped.save(save_path)
+            self.bg_win.destroy()
             self.root.destroy()
         except Exception as e:
             messagebox.showerror("Hata", f"Hata:\n{e}")
 
     def close_app(self):
+        self.bg_win.destroy()
         self.root.destroy()
 
 if __name__ == "__main__":
