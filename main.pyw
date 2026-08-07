@@ -167,7 +167,15 @@ class FastCutApp:
         crop_y2 = crop_y1 + win_h
         
         try:
-            cropped = self.resized_image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
+            scale_x = self.original_image.width / self.display_w
+            scale_y = self.original_image.height / self.display_h
+            orig_crop = (
+                crop_x1 * scale_x,
+                crop_y1 * scale_y,
+                crop_x2 * scale_x,
+                crop_y2 * scale_y,
+            )
+            cropped = self.original_image.crop(orig_crop)
             dir_name, file_name = os.path.split(self.image_path)
             name, ext = os.path.splitext(file_name)
             timestamp = datetime.datetime.now().strftime("%H_%M_%S")
