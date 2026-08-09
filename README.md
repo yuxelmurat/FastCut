@@ -49,6 +49,34 @@ Bu projeyi geliştirmek veya kodlarını incelemek isterseniz:
     pyinstaller --noconfirm --onefile --windowed --icon "icon.ico" --name "FastCut" "main.pyw"
     ```
 
+## 🏪 Microsoft Store'a Yayınlama
+
+Bu depoda yayın için gerekli tüm dosyalar hazır: `build/build_exe.bat` (derleme), `installer/installer.iss` (yükleyici), `PRIVACY_POLICY.md` (gizlilik politikası) ve `store/STORE_LISTING.md` (Store listeleme metinleri).
+
+> **Not:** FastCut sağ tık menüsü için sistem geneli registry (`HKEY_CLASSES_ROOT`) değiştirdiğinden ve bunun için yönetici izni istediğinden, **MSIX yerine "paketlenmemiş EXE/MSI" (unpackaged Win32 installer)** seçeneğiyle göndermeniz önerilir. MSIX sandbox'ı bu tür kalıcı sistem değişikliklerini varsayılan olarak kısıtlar.
+
+1.  **EXE derle** *(Windows makinede)*:
+    ```bash
+    build\build_exe.bat
+    ```
+    Çıktı: `dist\FastCut.exe`
+
+2.  **Yükleyici oluştur** *(Windows'ta, [Inno Setup](https://jrsoftware.org/isinfo.php) kurulu olmalı)*:
+    ```bash
+    iscc installer\installer.iss
+    ```
+    Çıktı: `installer\Output\FastCut-Setup-1.0.0.exe`
+
+3.  **Gizlilik politikasını yayınla:** `PRIVACY_POLICY.md` içeriğini kendi web sitenize veya GitHub Pages'e koyup URL'sini not edin (Store gönderiminde zorunlu).
+
+4.  **Partner Center hesabı açın:** [partner.microsoft.com/dashboard](https://partner.microsoft.com/dashboard) üzerinden (bireysel geliştirici kaydı, tek seferlik ücret + kimlik doğrulama gerektirir — bu adım geliştiricinin kendisi tarafından yapılmalıdır).
+
+5.  **Yeni gönderim oluşturun**, paket türü olarak **"MSI or EXE (unpackaged)"** seçin, 2. adımdaki yükleyiciyi yükleyin.
+
+6.  `store/STORE_LISTING.md` içindeki başlık, açıklama, anahtar kelime ve destek bilgilerini ilgili alanlara kopyalayın; ekran görüntülerini ekleyin.
+
+7.  Gönderimi inceleme için yollayın. Sertifikasyon sırasında "neden yönetici izni istiyor" sorulursa, gizlilik politikasındaki açıklamayı referans gösterin (sağ tık menü entegrasyonu için).
+
 ## 📝 Lisans
 
 Bu proje MIT Lisansı ile lisanslanmıştır. Herkes özgürce kullanabilir, değiştirebilir ve dağıtabilir.
