@@ -11,11 +11,12 @@ if errorlevel 1 goto :error
 
 echo [2/3] Eski build/dist klasorleri temizleniyor...
 if exist "build\pyinstaller" rmdir /s /q "build\pyinstaller"
+if exist "build\FastCut.spec" del /q "build\FastCut.spec"
 if exist "dist" rmdir /s /q "dist"
 
 echo [3/3] PyInstaller ile FastCut.exe derleniyor...
 pyinstaller --noconfirm --onefile --windowed ^
-    --icon "icon.ico" ^
+    --icon "%~dp0..\icon.ico" ^
     --name "FastCut" ^
     --distpath "dist" ^
     --workpath "build\pyinstaller" ^
